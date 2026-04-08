@@ -35,15 +35,17 @@
         .project-card:hover img { transform: scale(1.1); filter: brightness(0.6); }
 
         .project-section { height: 500vh; position: relative; }
-        .sticky-wrapper { position: sticky; top: 0; height: 100vh; overflow: hidden; width: 100%; }
+        .sticky-wrapper { position: sticky; top: 0; height: 100vh; overflow: hidden; width: 100%; background: #000; }
         
         .case-img { 
             position: absolute; inset: 0; width: 100%; height: 100%; 
-            object-fit: cover; opacity: 0; transition: 1.2s ease-in-out;
+            object-fit: contain; padding: 8vh 5vw; opacity: 0; 
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: scale(0.95);
         }
-        .case-img.active { opacity: 0.45; } 
+        .case-img.active { opacity: 0.85; transform: scale(1); } 
 
-        .overlay-text { position: absolute; bottom: 8%; left: 8%; z-index: 50; max-width: 450px; }
+        .overlay-text { position: absolute; bottom: 8%; left: 8%; z-index: 50; max-width: 450px; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
         .marquee { display: flex; overflow: hidden; border-y: 1px solid var(--border); padding: 25px 0; background: #050505; }
         .marquee-content { display: flex; animation: marquee 25s linear infinite; }
@@ -55,7 +57,7 @@
     <div id="loader"><h1 class="text-7xl font-black text-[#FF4D00]" id="load-text">0%</h1></div>
     <div id="cursor"></div>
 
-    <!-- MAIN HOME VIEW-->
+    <!-- MAIN HOME VIEW -->
     <main id="home-view" class="view active">
         <nav class="fixed top-0 w-full p-10 flex justify-between items-center z-50 mix-blend-difference">
             <div class="font-black text-2xl tracking-tighter">ABHI.DESIGNS__</div>
@@ -76,6 +78,7 @@
             &nbsp; UI/UX • BRANDING • VISUALS • WEB • REPEAT • UI/UX • BRANDING • VISUALS • WEB • REPEAT •
         </div></div>
 
+        <!-- ABOUT SECTION -->
         <section id="about" class="px-6 md:px-24 py-40">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bento-card md:col-span-2 reveal">
@@ -95,9 +98,10 @@
             </div>
         </section>
 
+        <!-- PROJECT GRID -->
         <section id="work-list" class="px-6 md:px-24 py-20 grid grid-cols-1 md:grid-cols-2 gap-10">
             <h3 class="md:col-span-2 text-[10px] font-bold tracking-[0.6em] uppercase opacity-20 mb-4">Selected Works</h3>
-            <!-- Card 1 -->
+            <!-- Gippye's Studio -->
             <div onclick="openProject('gippye-view')" class="project-card group cursor-pointer reveal">
                 <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png" alt="Gippye's Studio">
                 <div class="absolute bottom-6 left-6">
@@ -105,7 +109,7 @@
                     <p class="text-[9px] uppercase tracking-widest opacity-60">E-commerce / UI-UX</p>
                 </div>
             </div>
-            <!-- Card 2 -->
+            <!-- YB Craft -->
             <div onclick="openProject('yb-view')" class="project-card group cursor-pointer reveal">
                 <img src="https://image2url.com/r2/default/images/1775645287652-e3104e25-e1bf-4592-9dc5-9ba5ef32570b.png" alt="YB Craft">
                 <div class="absolute bottom-6 left-6">
@@ -115,26 +119,27 @@
             </div>
         </section>
 
+        <!-- CONTACT SECTION -->
         <footer id="contact" class="py-40 px-6 md:px-24 border-t border-white/5 bg-[#050505] text-center">
             <h2 class="text-[10vw] font-black tracking-tighter uppercase mb-12">Let's <span class="text-[#FF4D00]">Connect.</span></h2>
             <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24">
                 <div>
                     <p class="text-[10px] uppercase tracking-widest opacity-30 mb-4">Email</p>
-                    <a href="mailto:contact@abhi.design" class="text-xl md:text-2xl font-bold hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</a>
+                    <a href="mailto:abhi.designs11@gmail.com" class="text-xl md:text-2xl font-bold hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</a>
                 </div>
                 <div>
                     <p class="text-[10px] uppercase tracking-widest opacity-30 mb-4">Instagram</p>
                     <a href="https://instagram.com/abhi.designs__" target="_blank" class="text-xl md:text-2xl font-bold hover:text-[#FF4D00] transition">@abhi.designs__</a>
                 </div>
             </div>
-            <div class="mt-40 pt-10 border-t border-white/5 flex justify-between items-center text-[10px] uppercase tracking-widest opacity-20">
+            <div class="mt-40 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest opacity-30">
                 <p>© 2025 Abhi Designs__</p>
-                <p>Designed for Excellence</p>
+                <p class="mt-4 md:mt-0 font-bold text-white opacity-100 tracking-widest">Designed for Excellence</p>
             </div>
         </footer>
     </main>
 
-    <!-- DETAILED VIEW: GIPPYE (Full Screen Immersive) -->
+    <!-- DETAILED VIEW: GIPPYE -->
     <div id="gippye-view" class="view">
         <nav class="fixed top-0 w-full p-10 flex justify-between items-center z-50">
             <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back Home</button>
@@ -144,9 +149,8 @@
             <div class="sticky-wrapper">
                 <div class="overlay-text">
                     <h2 class="text-3xl font-black tracking-tight mb-4" id="g-title">Home Page</h2>
-                    <p class="text-xs leading-relaxed opacity-60 font-light" id="g-desc">Premium dark-mode storefront design for artisan craft storytelling.</p>
+                    <p class="text-xs leading-relaxed opacity-60 font-light" id="g-desc">Premium dark-mode storefront design.</p>
                 </div>
-                <!-- Updated Gippye Images -->
                 <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png" class="case-img active" data-title="Home Page" data-desc="The digital storefront for Gippye's Studio. Focused on high-end typography and dark aesthetics.">
                 <img src="https://image2url.com/r2/default/images/1775645339343-8c77330c-5e42-404a-a128-1f0a86863cd6.png" class="case-img" data-title="Bag Page" data-desc="Seamless mobile-first purchasing journey built for high conversion.">
                 <img src="https://image2url.com/r2/default/images/1775645374052-c735bb9a-c291-4106-ab27-b6a0805bab35.png" class="case-img" data-title="Owner Console" data-desc="A secure private dashboard for full, real-time inventory management.">
@@ -154,7 +158,7 @@
         </div>
     </div>
 
-    <!-- DETAILED VIEW: YB CRAFT (Full Screen Immersive) -->
+    <!-- DETAILED VIEW: YB CRAFT -->
     <div id="yb-view" class="view">
         <nav class="fixed top-0 w-full p-10 flex justify-between items-center z-50">
             <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back Home</button>
@@ -164,9 +168,8 @@
             <div class="sticky-wrapper">
                 <div class="overlay-text">
                     <h2 class="text-3xl font-black tracking-tight mb-4" id="y-title">The Identity</h2>
-                    <p class="text-xs leading-relaxed opacity-60 font-light" id="y-desc">Visual identity deconstruction inspired by handmade yarn art.</p>
+                    <p class="text-xs leading-relaxed opacity-60 font-light" id="y-desc">Visual identity deconstruction.</p>
                 </div>
-                <!-- Updated YB Craft Images -->
                 <img src="https://image2url.com/r2/default/images/1775645287652-e3104e25-e1bf-4592-9dc5-9ba5ef32570b.png" class="case-img active" data-title="The Identity" data-desc="A visual mark designed to reflect the warmth and creativity of handmade wool craft.">
                 <img src="https://image2url.com/r2/default/images/1775645466765-e367e088-0a7a-4a29-a8c3-e5ffdea0a7a7.png" class="case-img" data-title="Concept Logic" data-desc="Integrating needle loops and sparkles to represent craftsmanship and soul.">
                 <img src="https://image2url.com/r2/default/images/1775645515172-96f0b601-968b-4425-ac9d-683ccd117e92.png" class="case-img" data-title="Brand Colors" data-desc="Earthy tones chosen to reinforce an organic, tactile, and handmade brand feel.">
@@ -176,7 +179,7 @@
     </div>
 
     <script>
-        //1. PRELOADER
+        // Preloader
         let count = 0;
         let counter = setInterval(() => {
             count += 1;
@@ -187,12 +190,12 @@
             }
         }, 12);
 
-        // 2. SMOOTH SCROLL
+        // Smooth Scroll
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        // 3. NAVIGATION (SPA TRANSITIONS)
+        // Transitions
         function openProject(id) {
             gsap.to("#home-view", { opacity: 0, duration: 0.6, onComplete: () => {
                 document.getElementById('home-view').classList.remove('active');
@@ -216,44 +219,49 @@
             }});
         }
 
-        // 4. STICKY IMMERSIVE LOGIC
+        // Bi-Directional Sticky Logic
         gsap.registerPlugin(ScrollTrigger);
         function initSticky(containerId, titleId, descId) {
             const container = document.querySelector(`#${containerId} .project-section`);
             const imgs = gsap.utils.toArray(`#${containerId} .case-img`);
             const title = document.getElementById(titleId);
             const desc = document.getElementById(descId);
-            const step = 100 / imgs.length;
+            
+            let lastIndex = -1;
 
-            imgs.forEach((img, i) => {
-                ScrollTrigger.create({
-                    trigger: container,
-                    start: `${step * i}% top`,
-                    onToggle: self => {
-                        if (self.isActive) {
-                            imgs.forEach(m => m.classList.remove('active'));
-                            img.classList.add('active');
-                            // Small overlay text fade
-                            gsap.to([title, desc], { opacity: 0, y: 10, duration: 0.4, onComplete: () => {
-                                title.innerText = img.dataset.title;
-                                desc.innerText = img.dataset.desc;
-                                gsap.to([title, desc], { opacity: 1, y: 0, duration: 0.4 });
-                            }});
-                        }
+            ScrollTrigger.create({
+                trigger: container,
+                start: "top top",
+                end: "bottom bottom",
+                onUpdate: (self) => {
+                    let index = Math.floor(self.progress * imgs.length);
+                    if (index >= imgs.length) index = imgs.length - 1;
+                    if (index < 0) index = 0;
+
+                    if (index !== lastIndex) {
+                        lastIndex = index;
+                        const img = imgs[index];
+                        imgs.forEach(m => m.classList.remove('active'));
+                        img.classList.add('active');
+
+                        gsap.to([title, desc], { opacity: 0, y: 10, duration: 0.3, onComplete: () => {
+                            title.innerText = img.dataset.title;
+                            desc.innerText = img.dataset.desc;
+                            gsap.to([title, desc], { opacity: 1, y: 0, duration: 0.4 });
+                        }});
                     }
-                });
+                }
             });
         }
 
         initSticky('gippye-view', 'g-title', 'g-desc');
         initSticky('yb-view', 'y-title', 'y-desc');
 
-        // REVEAL ANIMATIONS
         document.querySelectorAll('.reveal').forEach(el => {
             gsap.from(el, { scrollTrigger: { trigger: el, start: "top 95%" }, opacity: 0, y: 40, duration: 1 });
         });
 
-        // CURSOR
+        // Cursor
         const cursor = document.getElementById('cursor');
         window.addEventListener('mousemove', (e) => gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 }));
     </script>
