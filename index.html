@@ -2,301 +2,260 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Demo Food Hub - Pro POS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhi Designs | Premium Immersive Studio</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .active-nav { background: #2563eb; color: white; border-radius: 8px; }
-        .h-screen-fix { height: 100vh; height: 100dvh; }
-        .kanban-col { height: 100%; min-width: 220px; overflow-y: auto; background: #f1f5f9; padding: 10px; border-radius: 12px; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
-        .show-modal { display: flex; }
-        .dish-btn { transition: all 0.1s; border: 1px solid #e2e8f0; cursor: pointer; }
-        .dish-btn:active { transform: scale(0.95); background: #eff6ff; }
-        
-        /* Custom Notification Design */
-        #toast {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: translate(-50%, -150%);
-        }
-        #toast.show { transform: translate(-50%, 20px); opacity: 1; }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    <style>
+        :root { --bg: #000; --card: #080808; --accent: #FF4D00; --border: rgba(255, 255, 255, 0.07); }
+        body { font-family: 'Sora', sans-serif; background-color: var(--bg); color: #fff; overflow-x: hidden; }
+        
+        #loader { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        #cursor { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 11000; box-shadow: 0 0 20px var(--accent); }
+        .stroke-text { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
+        
+        .view { display: none; opacity: 0; }
+        .view.active { display: block; opacity: 1; }
+
+        .bento-card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 2.5rem; transition: 0.5s; }
+        .bento-card:hover { border-color: var(--accent); }
+
+        .project-card { 
+            position: relative; border-radius: 20px; overflow: hidden; 
+            aspect-ratio: 16/9; border: 1px solid var(--border); 
+            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .project-card:hover { border-color: var(--accent); transform: scale(0.98); }
+        .project-card img { width: 100%; height: 100%; object-fit: cover; transition: 1.2s; }
+        .project-card:hover img { transform: scale(1.1); filter: brightness(0.6); }
+
+        .project-section { height: 500vh; position: relative; }
+        .sticky-wrapper { position: sticky; top: 0; height: 100vh; overflow: hidden; width: 100%; }
+        
+        .case-img { 
+            position: absolute; inset: 0; width: 100%; height: 100%; 
+            object-fit: cover; opacity: 0; transition: 1.2s ease-in-out;
+        }
+        .case-img.active { opacity: 0.45; } 
+
+        .overlay-text { position: absolute; bottom: 8%; left: 8%; z-index: 50; max-width: 450px; }
+
+        .marquee { display: flex; overflow: hidden; border-y: 1px solid var(--border); padding: 25px 0; background: #050505; }
+        .marquee-content { display: flex; animation: marquee 25s linear infinite; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     </style>
 </head>
-<body class="bg-slate-50 flex h-screen-fix overflow-hidden font-sans text-slate-800">
+<body>
 
-    <!-- CUSTOM TOAST NOTIFICATION -->
-    <div id="toast" class="fixed top-0 left-1/2 -translate-x-1/2 z-[200] opacity-0 pointer-events-none">
-        <div class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-blue-500/30">
-            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <i class="fa-solid fa-check text-[10px] text-white"></i>
+    <div id="loader"><h1 class="text-7xl font-black text-[#FF4D00]" id="load-text">0%</h1></div>
+    <div id="cursor"></div>
+
+    <!-- MAIN HOME VIEW -->
+    <main id="home-view" class="view active">
+        <nav class="fixed top-0 w-full p-10 flex justify-between items-center z-50 mix-blend-difference">
+            <div class="font-black text-2xl tracking-tighter">ABHI.DESIGNS__</div>
+            <div class="hidden md:flex gap-10 text-[10px] uppercase tracking-[0.4em] font-bold">
+                <a href="#about" class="hover:text-[#FF4D00]">About</a>
+                <a href="#work-list" class="hover:text-[#FF4D00]">Works</a>
+                <a href="#contact" class="hover:text-[#FF4D00]">Contact</a>
             </div>
-            <span id="toast-msg" class="text-[10px] font-black uppercase tracking-widest italic">Order Sent!</span>
+        </nav>
+
+        <section class="h-screen flex flex-col justify-center px-10 md:px-24">
+            <h2 class="text-[#FF4D00] text-sm font-bold tracking-[0.4em] uppercase mb-6 hero-anim">Digital Designer</h2>
+            <h1 class="text-[12vw] md:text-[8vw] font-black leading-[0.9] tracking-tighter uppercase hero-anim">Scaling <br> <span class="stroke-text">Modern</span> Brands.</h1>
+            <p class="max-w-lg mt-10 text-lg opacity-40 hero-anim font-light">Custom websites, premium identities, and studio-grade visuals.</p>
+        </section>
+
+        <div class="marquee"><div class="marquee-content text-6xl font-black uppercase opacity-10">
+            &nbsp; UI/UX • BRANDING • VISUALS • WEB • REPEAT • UI/UX • BRANDING • VISUALS • WEB • REPEAT •
+        </div></div>
+
+        <section id="about" class="px-6 md:px-24 py-40">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bento-card md:col-span-2 reveal">
+                    <span class="text-[#FF4D00] text-[10px] font-bold tracking-widest uppercase mb-6 block">Philosophy</span>
+                    <h3 class="text-4xl font-bold leading-tight">I bridge the gap between <br> <span class="text-[#FF4D00]">Craft & Technology.</span></h3>
+                    <p class="opacity-30 mt-10 text-sm leading-relaxed max-w-md">I help visionaries turn complex ideas into high-end digital experiences. No templates, just pure custom design systems built for scale.</p>
+                </div>
+                <div class="bento-card reveal">
+                    <span class="text-[#FF4D00] text-[10px] font-bold tracking-widest uppercase mb-6 block">Capabilities</span>
+                    <ul class="text-sm space-y-3 opacity-40">
+                        <li>• Web & UI/UX Design</li>
+                        <li>• Brand Strategy</li>
+                        <li>• Visual Manipulation</li>
+                        <li>• Framer Development</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="work-list" class="px-6 md:px-24 py-20 grid grid-cols-1 md:grid-cols-2 gap-10">
+            <h3 class="md:col-span-2 text-[10px] font-bold tracking-[0.6em] uppercase opacity-20 mb-4">Selected Works</h3>
+            <!-- Card 1 -->
+            <div onclick="openProject('gippye-view')" class="project-card group cursor-pointer reveal">
+                <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png" alt="Gippye's Studio">
+                <div class="absolute bottom-6 left-6">
+                    <h3 class="text-2xl font-bold tracking-tight">Gippye's Studio</h3>
+                    <p class="text-[9px] uppercase tracking-widest opacity-60">E-commerce / UI-UX</p>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div onclick="openProject('yb-view')" class="project-card group cursor-pointer reveal">
+                <img src="https://image2url.com/r2/default/images/1775645287652-e3104e25-e1bf-4592-9dc5-9ba5ef32570b.png" alt="YB Craft">
+                <div class="absolute bottom-6 left-6">
+                    <h3 class="text-2xl font-bold tracking-tight">YB Craft</h3>
+                    <p class="text-[9px] uppercase tracking-widest opacity-60">Brand Identity</p>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact" class="py-40 px-6 md:px-24 border-t border-white/5 bg-[#050505] text-center">
+            <h2 class="text-[10vw] font-black tracking-tighter uppercase mb-12">Let's <span class="text-[#FF4D00]">Connect.</span></h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24">
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest opacity-30 mb-4">Email</p>
+                    <a href="mailto:contact@abhi.design" class="text-xl md:text-2xl font-bold hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</a>
+                </div>
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest opacity-30 mb-4">Instagram</p>
+                    <a href="https://instagram.com/abhi.designs__" target="_blank" class="text-xl md:text-2xl font-bold hover:text-[#FF4D00] transition">@abhi.designs__</a>
+                </div>
+            </div>
+            <div class="mt-40 pt-10 border-t border-white/5 flex justify-between items-center text-[10px] uppercase tracking-widest opacity-20">
+                <p>© 2025 Abhi Designs__</p>
+                <p>Designed for Excellence</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- DETAILED VIEW: GIPPYE (Full Screen Immersive) -->
+    <div id="gippye-view" class="view">
+        <nav class="fixed top-0 w-full p-10 flex justify-between items-center z-50">
+            <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back Home</button>
+            <div class="font-black text-xl tracking-tighter">Gippye's</div>
+        </nav>
+        <div class="project-section">
+            <div class="sticky-wrapper">
+                <div class="overlay-text">
+                    <h2 class="text-3xl font-black tracking-tight mb-4" id="g-title">Home Page</h2>
+                    <p class="text-xs leading-relaxed opacity-60 font-light" id="g-desc">Premium dark-mode storefront design for artisan craft storytelling.</p>
+                </div>
+                <!-- Updated Gippye Images -->
+                <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png" class="case-img active" data-title="Home Page" data-desc="The digital storefront for Gippye's Studio. Focused on high-end typography and dark aesthetics.">
+                <img src="https://image2url.com/r2/default/images/1775645339343-8c77330c-5e42-404a-a128-1f0a86863cd6.png" class="case-img" data-title="Bag Page" data-desc="Seamless mobile-first purchasing journey built for high conversion.">
+                <img src="https://image2url.com/r2/default/images/1775645374052-c735bb9a-c291-4106-ab27-b6a0805bab35.png" class="case-img" data-title="Owner Console" data-desc="A secure private dashboard for full, real-time inventory management.">
+            </div>
         </div>
     </div>
 
-    <!-- LEFT NAVBAR -->
-    <aside class="w-16 md:w-56 bg-slate-900 text-white flex flex-col p-3 shrink-0">
-        <div class="flex flex-col items-center mb-8 border-b border-slate-700 pb-4">
-            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mb-2 shadow-lg ring-2 ring-blue-400">
-                <i class="fa-solid fa-utensils text-white text-lg"></i>
-            </div>
-            <div class="text-[9px] font-black text-white hidden md:block uppercase tracking-widest text-center italic">Demo Food Hub</div>
-        </div>
-        
-        <nav class="flex flex-col gap-2 flex-1">
-            <button onclick="showView('pos')" id="nav-pos" class="flex items-center justify-center md:justify-start gap-3 p-3 active-nav">
-                <i class="fa-solid fa-plus-square text-lg"></i> <span class="hidden md:block text-[10px] font-black uppercase tracking-widest">Take Order</span>
-            </button>
-            <button onclick="showView('kitchen')" id="nav-kitchen" class="flex items-center justify-center md:justify-start gap-3 p-3 text-slate-400">
-                <i class="fa-solid fa-fire-burner text-lg"></i> <span class="hidden md:block text-[10px] font-black uppercase tracking-widest">Kitchen TV</span>
-            </button>
-            <button onclick="showView('billing')" id="nav-billing" class="flex items-center justify-center md:justify-start gap-3 p-3 text-slate-400">
-                <i class="fa-solid fa-receipt text-lg"></i> <span class="hidden md:block text-[10px] font-black uppercase tracking-widest">Billing</span>
-            </button>
-            <button onclick="showView('menu-man')" id="nav-menu-man" class="flex items-center justify-center md:justify-start gap-3 p-3 text-slate-400">
-                <i class="fa-solid fa-list-check text-lg"></i> <span class="hidden md:block text-[10px] font-black uppercase tracking-widest">Menu Manager</span>
-            </button>
-            <button onclick="showView('insights')" id="nav-insights" class="flex items-center justify-center md:justify-start gap-3 p-3 text-slate-400">
-                <i class="fa-solid fa-chart-line text-lg"></i> <span class="hidden md:block text-[10px] font-black uppercase tracking-widest">Insights</span>
-            </button>
+    <!-- DETAILED VIEW: YB CRAFT (Full Screen Immersive) -->
+    <div id="yb-view" class="view">
+        <nav class="fixed top-0 w-full p-10 flex justify-between items-center z-50">
+            <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back Home</button>
+            <div class="font-black text-xl tracking-tighter">YB Craft</div>
         </nav>
-    </aside>
-
-    <!-- MAIN AREA -->
-    <main class="flex-1 flex flex-col overflow-hidden relative">
-        <header class="h-12 bg-white border-b px-4 flex items-center justify-between shadow-sm">
-            <div class="flex items-center gap-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <h2 id="view-title" class="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">DEMO FOOD HUB</h2>
-            </div>
-            <div class="font-black text-blue-600 text-xs">Rev: ₹<span id="header-rev">0</span></div>
-        </header>
-
-        <!-- POS VIEW -->
-        <section id="view-pos" class="flex flex-col lg:flex-row flex-1 overflow-hidden">
-            <div class="flex-1 p-3 overflow-y-auto grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 content-start" id="menu-grid"></div>
-            <div class="w-full lg:w-72 border-t lg:border-t-0 lg:border-l bg-white flex flex-col h-1/2 lg:h-full shadow-lg">
-                <div class="p-2 bg-slate-50 border-b font-black text-[9px] text-slate-400 uppercase flex justify-between items-center">
-                    <span>Active Cart</span>
-                    <button onclick="clearCart()" class="text-red-400 text-[8px] border border-red-200 px-2 rounded">Reset</button>
+        <div class="project-section">
+            <div class="sticky-wrapper">
+                <div class="overlay-text">
+                    <h2 class="text-3xl font-black tracking-tight mb-4" id="y-title">The Identity</h2>
+                    <p class="text-xs leading-relaxed opacity-60 font-light" id="y-desc">Visual identity deconstruction inspired by handmade yarn art.</p>
                 </div>
-                <div id="cart-list" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
-                <div class="p-3 border-t bg-white">
-                    <div class="flex justify-between font-black text-sm mb-2 uppercase"><span>Total Bill</span><span>₹<span id="cart-total">0</span></span></div>
-                    <button onclick="openTableModal()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-md">Assign Table</button>
-                </div>
+                <!-- Updated YB Craft Images -->
+                <img src="https://image2url.com/r2/default/images/1775645287652-e3104e25-e1bf-4592-9dc5-9ba5ef32570b.png" class="case-img active" data-title="The Identity" data-desc="A visual mark designed to reflect the warmth and creativity of handmade wool craft.">
+                <img src="https://image2url.com/r2/default/images/1775645466765-e367e088-0a7a-4a29-a8c3-e5ffdea0a7a7.png" class="case-img" data-title="Concept Logic" data-desc="Integrating needle loops and sparkles to represent craftsmanship and soul.">
+                <img src="https://image2url.com/r2/default/images/1775645515172-96f0b601-968b-4425-ac9d-683ccd117e92.png" class="case-img" data-title="Brand Colors" data-desc="Earthy tones chosen to reinforce an organic, tactile, and handmade brand feel.">
+                <img src="https://image2url.com/r2/default/images/1775645544960-cef3d12f-de12-43ec-94bb-261534b3bbc1.png" class="case-img" data-title="Physical Result" data-desc="Translating the digital brand into premium physical product mockups and assets.">
             </div>
-        </section>
-
-        <!-- MENU MANAGER -->
-        <section id="view-menu-man" class="hidden flex-1 p-4 overflow-y-auto bg-white">
-            <h3 class="font-black text-sm mb-6 uppercase tracking-widest text-blue-600 italic underline underline-offset-8 decoration-blue-200">Menu Library</h3>
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-8 max-w-md">
-                <p class="text-[9px] font-black text-slate-400 uppercase mb-3">Add New Dish Item</p>
-                <div class="flex gap-2">
-                    <input id="new-name" type="text" placeholder="Dish Name" class="flex-1 p-2 text-xs border rounded-lg focus:outline-blue-500">
-                    <input id="new-price" type="number" placeholder="₹" class="w-20 p-2 text-xs border rounded-lg focus:outline-blue-500">
-                    <button onclick="addNewDish()" class="bg-blue-600 text-white px-5 rounded-lg font-black text-xs hover:bg-blue-700">+</button>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="menu-edit-list"></div>
-        </section>
-
-        <!-- KITCHEN TV -->
-        <section id="view-kitchen" class="hidden flex-1 p-3 overflow-x-auto bg-slate-200">
-            <div class="flex gap-3 h-full pb-4">
-                <div class="flex-1"><p class="text-[9px] font-black mb-1 text-slate-500 text-center uppercase">Pending</p><div id="col-pending" class="kanban-col space-y-2"></div></div>
-                <div class="flex-1"><p class="text-[9px] font-black mb-1 text-slate-500 text-center uppercase">Chef Cooking</p><div id="col-preparing" class="kanban-col space-y-2"></div></div>
-                <div class="flex-1"><p class="text-[9px] font-black mb-1 text-slate-500 text-center uppercase">Order Ready</p><div id="col-ready" class="kanban-col space-y-2"></div></div>
-                <div class="flex-1 opacity-50"><p class="text-[9px] font-black mb-1 text-slate-500 text-center uppercase">Served</p><div id="col-served" class="kanban-col space-y-2"></div></div>
-            </div>
-        </section>
-
-        <!-- BILLING -->
-        <section id="view-billing" class="hidden flex-1 p-4 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-y-auto bg-slate-50">
-            <div class="w-full lg:w-64 space-y-2" id="bill-table-list"></div>
-            <div id="bill-panel" class="flex-1 bg-white border rounded-3xl p-8 shadow-sm flex items-center justify-center text-slate-300 italic">No bill selected</div>
-        </section>
-
-        <!-- INSIGHTS -->
-        <section id="view-insights" class="hidden flex-1 p-6 overflow-y-auto bg-white">
-            <div class="bg-slate-900 text-white p-6 rounded-2xl mb-6 shadow-xl border border-blue-500/20">
-                <p class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Today's Net Profit</p>
-                <h1 class="text-4xl font-black italic text-blue-400">₹<span id="ins-total">0</span></h1>
-            </div>
-            <table class="w-full text-left text-[9px] bg-slate-50 rounded-xl overflow-hidden shadow-sm">
-                <thead class="bg-slate-200 font-black"><tr><th class="p-4 uppercase">Table</th><th class="p-4 uppercase">Summary</th><th class="p-4 uppercase">Paid</th></tr></thead>
-                <tbody id="settle-history"></tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- ASSIGN TABLE MODAL -->
-    <div id="table-modal" class="modal">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-xs mx-4">
-            <h4 class="text-center font-black text-[10px] mb-4 text-slate-400 uppercase tracking-widest italic">Assign to Table No.</h4>
-            <div class="grid grid-cols-3 gap-2" id="modal-table-grid"></div>
-            <button onclick="closeModal()" class="w-full mt-6 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Cancel</button>
         </div>
     </div>
 
     <script>
-        let menu = [{name:"Masala Dosa",price:120},{name:"Butter Pav Bhaji",price:140},{name:"Cheese Dosa",price:180},{name:"Paneer Pulao",price:130}];
-        let cart = []; let orders = []; let history = []; let dailyRev = 0;
+        // 1. PRELOADER
+        let count = 0;
+        let counter = setInterval(() => {
+            count += 1;
+            document.getElementById('load-text').innerText = count + "%";
+            if(count == 100) {
+                clearInterval(counter);
+                gsap.to("#loader", { y: "-100%", duration: 1.2, ease: "power4.inOut" });
+            }
+        }, 12);
 
-        // --- TOAST NOTIFICATION LOGIC ---
-        function triggerToast(msg) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-msg');
-            toastMsg.innerText = msg;
-            toast.classList.add('show', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('show', 'opacity-100');
-            }, 3000);
+        // 2. SMOOTH SCROLL
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // 3. NAVIGATION (SPA TRANSITIONS)
+        function openProject(id) {
+            gsap.to("#home-view", { opacity: 0, duration: 0.6, onComplete: () => {
+                document.getElementById('home-view').classList.remove('active');
+                const project = document.getElementById(id);
+                project.classList.add('active');
+                gsap.to(project, { opacity: 1, duration: 0.6 });
+                window.scrollTo(0,0);
+                ScrollTrigger.refresh();
+            }});
         }
 
-        function showView(v) {
-            ['pos','kitchen','billing','insights','menu-man'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
-            document.getElementById('view-'+v).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
-            document.getElementById('nav-'+v).classList.add('active-nav');
-            if(v === 'billing') renderBilling();
-            if(v === 'insights') renderInsights();
-            if(v === 'menu-man') renderMenuEditList();
-            document.getElementById('view-title').innerText = "DEMO HUB | " + v.toUpperCase();
+        function closeProject() {
+            const active = document.querySelector('.view.active:not(#home-view)');
+            gsap.to(active, { opacity: 0, duration: 0.6, onComplete: () => {
+                active.classList.remove('active');
+                const home = document.getElementById('home-view');
+                home.classList.add('active');
+                gsap.to(home, { opacity: 1, duration: 0.6 });
+                window.scrollTo(0,0);
+                ScrollTrigger.refresh();
+            }});
         }
 
-        // --- MENU & POS ---
-        function renderPOS() {
-            document.getElementById('menu-grid').innerHTML = menu.map((m,i)=>`
-                <div onclick="addToCart(${i})" class="dish-btn bg-white p-3 rounded-xl text-center shadow-sm">
-                    <p class="font-bold text-[9px] uppercase h-6 overflow-hidden mb-1 leading-tight">${m.name}</p>
-                    <p class="text-blue-600 font-black text-xs">₹${m.price}</p>
-                </div>`).join('');
-        }
+        // 4. STICKY IMMERSIVE LOGIC
+        gsap.registerPlugin(ScrollTrigger);
+        function initSticky(containerId, titleId, descId) {
+            const container = document.querySelector(`#${containerId} .project-section`);
+            const imgs = gsap.utils.toArray(`#${containerId} .case-img`);
+            const title = document.getElementById(titleId);
+            const desc = document.getElementById(descId);
+            const step = 100 / imgs.length;
 
-        function renderMenuEditList() {
-            document.getElementById('menu-edit-list').innerHTML = menu.map((m,i)=>`
-                <div class="bg-white p-3 rounded-xl border flex justify-between items-center shadow-sm">
-                    <div>
-                        <p class="font-black text-xs uppercase">${m.name}</p>
-                        <p class="text-[10px] text-blue-600 font-bold italic">₹${m.price}</p>
-                    </div>
-                    <button onclick="removeDish(${i})" class="text-slate-300 hover:text-red-500 p-2 transition">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>`).join('');
-        }
-
-        function addNewDish() {
-            const name = document.getElementById('new-name').value;
-            const price = document.getElementById('new-price').value;
-            if(!name || !price) return;
-            menu.push({name: name, price: parseInt(price)});
-            document.getElementById('new-name').value = '';
-            document.getElementById('new-price').value = '';
-            renderMenuEditList(); renderPOS();
-            triggerToast("Dish Added to Library!");
-        }
-
-        function removeDish(index) {
-            menu.splice(index, 1);
-            renderMenuEditList(); renderPOS();
-            triggerToast("Dish Removed!");
-        }
-
-        function addToCart(i) { cart.push(menu[i]); updateCart(); }
-        function updateCart() {
-            document.getElementById('cart-list').innerHTML = cart.map(c=>`<div class="flex justify-between p-1.5 border-b text-[9px] font-black bg-white rounded mb-1"><span>${c.name}</span><span>₹${c.price}</span></div>`).join('');
-            document.getElementById('cart-total').innerText = cart.reduce((s,i)=>s+i.price, 0);
-        }
-        function clearCart() { cart = []; updateCart(); }
-
-        function openTableModal() {
-            if(!cart.length) return triggerToast("Cart is Empty!");
-            document.getElementById('modal-table-grid').innerHTML = Array.from({length:12}, (_,i)=>{
-                const tName = `T${i+1}`;
-                const isBusy = orders.some(o => o.table === tName);
-                const color = isBusy ? 'bg-orange-50 text-orange-500' : 'bg-slate-50 text-slate-700';
-                return `<button onclick="placeOrder(${i+1})" class="${color} p-4 rounded-xl font-black text-sm shadow-sm border border-slate-100 transition">${tName}</button>`;
-            }).join('');
-            document.getElementById('table-modal').classList.add('show-modal');
-        }
-
-        function closeModal() { document.getElementById('table-modal').classList.remove('show-modal'); }
-
-        function placeOrder(tNo) {
-            const tableName = `T${tNo}`;
-            orders.push({ id:Date.now(), table: tableName, items:[...cart], status:'pending' });
-            cart=[]; updateCart(); closeModal(); renderKitchen();
-            triggerToast(`Order Sent for Table ${tableName}!`);
-        }
-
-        // --- KITCHEN & BILLING ---
-        function renderKitchen() {
-            ['pending','preparing','ready','served'].forEach(id => document.getElementById('col-'+id).innerHTML = '');
-            orders.forEach(o => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-3 rounded-xl border-l-4 border-blue-600 shadow-sm text-[10px]";
-                card.innerHTML = `<div class="font-black mb-1 uppercase italic">${o.table}</div><p class="text-slate-400 font-bold mb-3 uppercase tracking-tighter">${o.items.map(i=>i.name).join(', ')}</p>
-                    ${o.status!=='served' ? `<button onclick="nextStatus(${o.id})" class="w-full bg-slate-900 text-white p-2 rounded-lg font-black text-[9px] uppercase tracking-widest">Next State</button>` : '<b class="text-green-500 italic">Served ✓</b>'}`;
-                document.getElementById('col-'+o.status).appendChild(card);
+            imgs.forEach((img, i) => {
+                ScrollTrigger.create({
+                    trigger: container,
+                    start: `${step * i}% top`,
+                    onToggle: self => {
+                        if (self.isActive) {
+                            imgs.forEach(m => m.classList.remove('active'));
+                            img.classList.add('active');
+                            // Small overlay text fade
+                            gsap.to([title, desc], { opacity: 0, y: 10, duration: 0.4, onComplete: () => {
+                                title.innerText = img.dataset.title;
+                                desc.innerText = img.dataset.desc;
+                                gsap.to([title, desc], { opacity: 1, y: 0, duration: 0.4 });
+                            }});
+                        }
+                    }
+                });
             });
         }
 
-        function nextStatus(id) {
-            const o = orders.find(x=>x.id===id);
-            const flow = {pending:'preparing', preparing:'ready', ready:'served'};
-            o.status = flow[o.status];
-            renderKitchen();
-        }
+        initSticky('gippye-view', 'g-title', 'g-desc');
+        initSticky('yb-view', 'y-title', 'y-desc');
 
-        function renderBilling() {
-            const list = document.getElementById('bill-table-list');
-            const served = orders.filter(o => o.status === 'served');
-            const uniqueTables = [...new Set(served.map(o => o.table))];
-            if(!uniqueTables.length) return list.innerHTML = "<p class='text-[10px] text-slate-300 italic py-10 text-center font-black uppercase tracking-widest'>No Payments Pending</p>";
-            list.innerHTML = uniqueTables.map(t => `<button onclick="showBill('${t}')" class="w-full bg-white border-2 border-transparent p-4 rounded-xl text-left font-black text-xs hover:border-blue-500 shadow-sm transition"><i class="fa-solid fa-receipt text-blue-500 mr-2"></i> ${t} MERGED INVOICE</button>`).join('');
-        }
+        // REVEAL ANIMATIONS
+        document.querySelectorAll('.reveal').forEach(el => {
+            gsap.from(el, { scrollTrigger: { trigger: el, start: "top 95%" }, opacity: 0, y: 40, duration: 1 });
+        });
 
-        function showBill(tName) {
-            const tableOrders = orders.filter(o => o.table === tName && o.status === 'served');
-            let items = []; tableOrders.forEach(o => items.push(...o.items));
-            const sub = items.reduce((s,i)=>s+i.price, 0); const gst = Math.round(sub * 0.05);
-            document.getElementById('bill-panel').innerHTML = `
-                <div class="w-full max-w-sm bg-white p-8 rounded-[40px] shadow-2xl border">
-                    <h3 class="text-2xl font-black mb-1 italic text-blue-600 text-center">Demo Food Hub</h3>
-                    <p class="text-[9px] font-black text-slate-400 mb-6 uppercase tracking-widest text-center">${tName} Final Bill</p>
-                    <div class="space-y-1 mb-6 border-b pb-4 max-h-32 overflow-y-auto">${items.map(i=>`<div class="flex justify-between text-[11px] font-bold"><span>${i.name}</span><span>₹${i.price}</span></div>`).join('')}</div>
-                    <div class="text-right text-[10px] mb-8 font-black text-slate-400 uppercase tracking-widest"><p>Sub: ₹${sub}</p><p>GST: ₹${gst}</p><h2 class="text-3xl font-black text-blue-600 mt-2 italic tracking-tighter">Total: ₹${sub+gst}</h2></div>
-                    <button onclick="settle('${tName}', ${sub+gst})" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-black text-[10px] uppercase shadow-lg hover:bg-black transition">Settle Bill</button>
-                </div>`;
-        }
-
-        function settle(tName, total) {
-            const tableOrders = orders.filter(o => o.table === tName && o.status === 'served');
-            let summary = []; tableOrders.forEach(o => summary.push(...o.items.map(i=>i.name)));
-            history.push({ table:tName, items:summary.join(', '), total:total });
-            dailyRev += total;
-            document.getElementById('header-rev').innerText = dailyRev;
-            orders = orders.filter(o => !(o.table === tName && o.status === 'served'));
-            document.getElementById('bill-panel').innerHTML = `<div class="text-green-500 font-black text-center py-10 italic">SETTLEMENT COMPLETE ✓</div>`;
-            renderBilling(); triggerToast(`${tName} Bill Paid!`);
-        }
-
-        function renderInsights() {
-            document.getElementById('ins-total').innerText = dailyRev;
-            document.getElementById('ins-gst').innerText = Math.round(dailyRev * 0.05);
-            document.getElementById('ins-count').innerText = history.length;
-            document.getElementById('settle-history').innerHTML = history.map(h => `<tr class="border-b"><td class="p-4 font-black italic uppercase">${h.table}</td><td class="p-4 text-slate-400 font-bold uppercase tracking-tighter">${h.items}</td><td class="p-4 font-black text-blue-600">₹${h.total}</td></tr>`).join('');
-        }
-
-        renderPOS();
-        showView('pos');
+        // CURSOR
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', (e) => gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 }));
     </script>
 </body>
 </html>
