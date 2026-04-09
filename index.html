@@ -17,50 +17,51 @@
         
         #loader { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
         
-        .stroke-text { -webkit-text-stroke: 1px rgba(255,255,255,0.15); color: transparent; }
+        /* RESTORED BIG HERO TYPE */
+        .hero-title { font-size: 16vw; line-height: 0.85; font-weight: 800; letter-spacing: -0.05em; text-transform: uppercase; }
+        @media (min-width: 768px) { .hero-title { font-size: 10vw; } }
+
+        .stroke-text { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
+        
         .view { display: none; opacity: 0; }
         .view.active { display: block; opacity: 1; }
 
-        /* CRYSTAL GLASS UI */
         .glass-ui { 
-            background: rgba(255, 255, 255, 0.01); 
-            backdrop-filter: blur(25px) saturate(180%); 
-            -webkit-backdrop-filter: blur(25px) saturate(180%); 
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
         }
 
+        /* PROJECT CARDS */
         .project-card { 
-            position: relative; border-radius: 16px; overflow: hidden; 
+            position: relative; border-radius: 20px; overflow: hidden; 
             aspect-ratio: 16/10; border: 1px solid var(--border); 
             transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1), border-color 0.4s ease;
-            max-width: 480px; margin: 0 auto; width: 100%;
+            max-width: 500px; margin: 0 auto; width: 100%;
         }
         .project-card:hover { border-color: var(--accent); transform: scale(0.98); }
         .project-card img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s ease; filter: brightness(0.8); }
-        .project-card:hover img { transform: scale(1.06); filter: brightness(0.4); }
+        .project-card:hover img { transform: scale(1.08); filter: brightness(0.4); }
 
-        /* ULTRA COMPACT CRYSTAL BADGE */
+        /* CRYSTAL SMALL TYPE BADGE */
         .text-badge {
             background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(30px) saturate(200%);
-            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.2), 
-                0 8px 32px rgba(0, 0, 0, 0.4);
-            padding: 0.45rem 0.85rem; 
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5);
+            padding: 0.4rem 0.8rem;
             border-radius: 12px;
             position: absolute;
-            bottom: 12px; left: 12px;
+            bottom: 15px; left: 15px;
             z-index: 50;
             width: fit-content;
         }
 
-        .text-badge h3 { font-size: 0.75rem; line-height: 1; font-weight: 700; letter-spacing: -0.01em; }
+        .text-badge h3 { font-size: 0.85rem; line-height: 1; font-weight: 700; }
         .text-badge p { font-size: 0.45rem; line-height: 1; margin-top: 3px; opacity: 0.5; font-weight: 600; letter-spacing: 0.05em; }
         
-        /* CRYSTAL LIGHT STREAK */
         .accent-line { 
             width: 100%; height: 1.5px; 
             background: linear-gradient(90deg, transparent, var(--accent), transparent); 
@@ -80,60 +81,59 @@
         .case-img.active { opacity: 0.85; transform: scale(1); } 
 
         .overlay-text { position: absolute; bottom: 8%; left: 8%; z-index: 50; max-width: 320px; }
-        .overlay-text h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
-        .overlay-text p { font-size: 0.55rem; opacity: 0.5; margin-top: 2px; }
+        .overlay-text h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+        .overlay-text p { font-size: 0.55rem; opacity: 0.5; margin-top: 4px; }
 
-        .marquee { display: flex; overflow: hidden; border-y: 1px solid var(--border); padding: 15px 0; background: #050505; }
-        .marquee-content { display: flex; animation: marquee 20s linear infinite; }
+        .marquee { display: flex; overflow: hidden; border-y: 1px solid var(--border); padding: 25px 0; background: #050505; }
+        .marquee-content { display: flex; animation: marquee 25s linear infinite; }
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     </style>
 </head>
 <body>
 
-    <div id="loader"><h1 class="text-4xl font-black text-[#FF4D00]" id="load-text">0%</h1></div>
+    <div id="loader"><h1 class="text-6xl font-black text-[#FF4D00]" id="load-text">0%</h1></div>
 
-    <!-- MAIN HOME VIEW -->
     <main id="home-view" class="view active">
-        <nav class="fixed top-0 w-full p-5 flex justify-between items-center z-50 mix-blend-difference">
-            <div class="font-black text-base tracking-tighter">ABHI.DESIGNS__</div>
-            <div class="hidden md:flex gap-6 text-[8px] uppercase tracking-[0.3em] font-bold">
-                <a href="#about" class="hover:text-[#FF4D00] transition">About</a>
-                <a href="#work-list" class="hover:text-[#FF4D00] transition">Works</a>
-                <a href="#contact" class="hover:text-[#FF4D00] transition">Contact</a>
+        <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
+            <div class="font-black text-2xl tracking-tighter">ABHI.DESIGNS__</div>
+            <div class="hidden md:flex gap-10 text-[10px] uppercase tracking-[0.3em] font-bold">
+                <a href="#about" class="hover:text-[#FF4D00]">About</a>
+                <a href="#work-list" class="hover:text-[#FF4D00]">Works</a>
+                <a href="#contact" class="hover:text-[#FF4D00]">Contact</a>
             </div>
         </nav>
 
         <section class="h-screen flex flex-col justify-center px-10 md:px-24">
-            <h2 class="text-[#FF4D00] text-[8px] font-bold tracking-[0.5em] uppercase mb-3 hero-anim">Digital Designer</h2>
-            <h1 class="text-[14vw] md:text-[8vw] font-black leading-[0.85] tracking-tighter uppercase hero-anim">Scaling <br> <span class="stroke-text">Modern</span> Brands.</h1>
-            <p class="max-w-xs mt-8 text-xs opacity-40 hero-anim font-light leading-relaxed">Elite design systems and visuals for scaling brands.</p>
+            <h2 class="text-[#FF4D00] text-[11px] font-bold tracking-[0.5em] uppercase mb-6 hero-anim">Digital Designer</h2>
+            <h1 class="hero-title hero-anim">Scaling <br> <span class="stroke-text">Modern</span> Brands.</h1>
+            <p class="max-w-md mt-10 text-lg opacity-40 hero-anim font-light leading-relaxed">Elite design systems and visuals for world-class brands.</p>
         </section>
 
-        <div class="marquee"><div class="marquee-content text-3xl font-black uppercase opacity-10">
-            &nbsp; UI/UX • BRAND IDENTITY • VISUAL ART • WEB • REPEAT • UI/UX • BRAND IDENTITY • VISUAL ART • WEB • REPEAT •
+        <div class="marquee"><div class="marquee-content text-4xl font-black uppercase opacity-10">
+            &nbsp; UI/UX • BRAND IDENTITY • VISUAL ART • WEB DEVELOPMENT • REPEAT • UI/UX • BRAND IDENTITY • 
         </div></div>
 
-        <section id="about" class="px-6 md:px-24 py-24">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-                <div class="glass-ui p-6 md:col-span-2 rounded-[20px] reveal">
-                    <span class="text-[#FF4D00] text-[7px] font-bold tracking-widest uppercase mb-3 block">Philosophy</span>
-                    <h3 class="text-xl font-bold leading-snug">Design is the silent ambassador <br> of your <span class="text-[#FF4D00]">Scale.</span></h3>
-                    <p class="opacity-30 mt-4 text-[10px] leading-relaxed max-w-xs">I bridge the gap between human curiosity and high-performance branding.</p>
+        <section id="about" class="px-6 md:px-24 py-32">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+                <div class="glass-ui p-10 md:col-span-2 rounded-[32px] reveal">
+                    <span class="text-[#FF4D00] text-[9px] font-bold tracking-widest uppercase mb-4 block">Philosophy</span>
+                    <h3 class="text-3xl font-bold leading-snug">Design is the silent <br> ambassador of your <span class="text-[#FF4D00]">Scale.</span></h3>
+                    <p class="opacity-30 mt-8 text-sm leading-relaxed max-w-md">I eliminate the friction between a brand and its audience through strategic aesthetic execution.</p>
                 </div>
-                <div class="glass-ui p-6 rounded-[20px] reveal">
-                    <span class="text-[#FF4D00] text-[7px] font-bold tracking-widest uppercase mb-3 block">Focus</span>
-                    <ul class="text-[9px] space-y-2 opacity-40 font-bold tracking-widest">
+                <div class="glass-ui p-10 rounded-[32px] reveal">
+                    <span class="text-[#FF4D00] text-[9px] font-bold tracking-widest uppercase mb-4 block">Focus</span>
+                    <ul class="text-xs space-y-4 opacity-40 font-bold tracking-widest">
                         <li>• WEB DESIGN</li>
-                        <li>• IDENTITY</li>
+                        <li>• BRAND SYSTEMS</li>
                         <li>• CGI VISUALS</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <section id="work-list" class="px-6 md:px-24 py-16 max-w-5xl mx-auto">
-            <h3 class="text-[7px] font-bold tracking-[0.6em] uppercase opacity-20 mb-10 text-center">Selected Work</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section id="work-list" class="px-6 md:px-24 py-20 max-w-7xl mx-auto">
+            <h3 class="text-[9px] font-bold tracking-[0.6em] uppercase opacity-20 mb-12 text-center">Selected Works</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                 
                 <div onclick="openProject('gippye-view')" class="project-card group cursor-pointer reveal">
                     <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png">
@@ -156,29 +156,29 @@
             </div>
         </section>
 
-        <footer id="contact" class="py-24 px-6 md:px-24 border-t border-white/5 bg-[#050505] text-center">
-            <h2 class="text-[12vw] font-black tracking-tighter uppercase mb-12">Let's <span class="text-[#FF4D00]">Scale.</span></h2>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-20">
+        <footer id="contact" class="py-32 px-6 md:px-24 border-t border-white/5 bg-[#050505] text-center">
+            <h2 class="text-[12vw] font-black tracking-tighter uppercase mb-16">Let's <span class="text-[#FF4D00]">Scale.</span></h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-16 md:gap-32">
                 <a href="mailto:abhi.designs11@gmail.com" class="group">
-                    <p class="text-[7px] uppercase tracking-widest opacity-30 mb-2">Email</p>
-                    <span class="text-sm md:text-base font-bold border-b border-white/5 group-hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</span>
+                    <p class="text-[9px] uppercase tracking-widest opacity-30 mb-2">Email</p>
+                    <span class="text-xl md:text-2xl font-bold group-hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</span>
                 </a>
                 <a href="https://instagram.com/abhi.designs__" target="_blank" class="group">
-                    <p class="text-[7px] uppercase tracking-widest opacity-30 mb-2">Instagram</p>
-                    <span class="text-sm md:text-base font-bold border-b border-white/5 group-hover:text-[#FF4D00] transition">@abhi.designs__</span>
+                    <p class="text-[9px] uppercase tracking-widest opacity-30 mb-2">Instagram</p>
+                    <span class="text-xl md:text-2xl font-bold group-hover:text-[#FF4D00] transition">@abhi.designs__</span>
                 </a>
             </div>
-            <div class="mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[7px] uppercase tracking-[0.3em] opacity-30">
+            <div class="mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.3em] opacity-30">
                 <p>© 2025 Abhi Designs__</p>
-                <p class="mt-3 md:mt-0 font-black text-white opacity-100">Designed for Excellence</p>
+                <p class="mt-4 md:mt-0 font-black text-white opacity-100">Designed for Excellence</p>
             </div>
         </footer>
     </main>
 
     <div id="gippye-view" class="view">
-        <nav class="fixed top-0 w-full p-5 flex justify-between items-center z-50">
-            <button onclick="closeProject()" class="text-[7px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back</button>
-            <div class="font-black text-xs tracking-tighter">Gippye's</div>
+        <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50">
+            <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back</button>
+            <div class="font-black text-lg tracking-tighter">Gippye's</div>
         </nav>
         <div class="project-section">
             <div class="sticky-wrapper">
@@ -187,16 +187,16 @@
                     <p class="leading-relaxed opacity-60 font-light" id="g-desc">Premium dark-mode storefront design.</p>
                 </div>
                 <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png" class="case-img active" data-title="Home Page" data-desc="The digital storefront for Gippye's Studio. Focused on high-end typography and dark aesthetics.">
-                <img src="https://image2url.com/r2/default/images/1775645339343-8c77330c-5e42-404a-a128-1f0a86863cd6.png" class="case-img" data-title="Bag Page" data-desc="Seamless mobile-first purchasing journey built for high conversion.">
-                <img src="https://image2url.com/r2/default/images/1775645374052-c735bb9a-c291-4106-ab27-b6a0805bab35.png" class="case-img" data-title="Owner Console" data-desc="A secure private dashboard for full, real-time inventory management.">
+                <img src="https://image2url.com/r2/default/images/1775645339343-8c77330c-5e42-404a-a128-1f0a86863cd6.png" class="case-img" data-title="Flow" data-desc="Seamless mobile-first purchasing journey built for high conversion.">
+                <img src="https://image2url.com/r2/default/images/1775645374052-c735bb9a-c291-4106-ab27-b6a0805bab35.png" class="case-img" data-title="Admin" data-desc="Private dashboard for real-time inventory management.">
             </div>
         </div>
     </div>
 
     <div id="yb-view" class="view">
-        <nav class="fixed top-0 w-full p-5 flex justify-between items-center z-50">
-            <button onclick="closeProject()" class="text-[7px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back</button>
-            <div class="font-black text-xs tracking-tighter">YB Craft</div>
+        <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50">
+            <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back</button>
+            <div class="font-black text-lg tracking-tighter">YB Craft</div>
         </nav>
         <div class="project-section">
             <div class="sticky-wrapper">
@@ -206,14 +206,13 @@
                 </div>
                 <img src="https://image2url.com/r2/default/images/1775645287652-e3104e25-e1bf-4592-9dc5-9ba5ef32570b.png" class="case-img active" data-title="The Identity" data-desc="Reflecting the warmth and creativity of handmade wool craft.">
                 <img src="https://image2url.com/r2/default/images/1775645466765-e367e088-0a7a-4a29-a8c3-e5ffdea0a7a7.png" class="case-img" data-title="Concept" data-desc="Integrating needle loops and sparkles to represent artistry.">
-                <img src="https://image2url.com/r2/default/images/1775645515172-96f0b601-968b-4425-ac9d-683ccd117e92.png" class="case-img" data-title="Palette" data-desc="Earthy tones chosen for an organic, handmade brand feel.">
-                <img src="https://image2url.com/r2/default/images/1775645544960-cef3d12f-de12-43ec-94bb-261534b3bbc1.png" class="case-img" data-title="Physical Result" data-desc="Translating the brand into premium physical product assets.">
+                <img src="https://image2url.com/r2/default/images/1775645515172-96f0b601-968b-4425-ac9d-683ccd117e92.png" class="case-img" data-title="Palette" data-desc="Earthy tones chosen for an organic brand feel.">
+                <img src="https://image2url.com/r2/default/images/1775645544960-cef3d12f-de12-43ec-94bb-261534b3bbc1.png" class="case-img" data-title="Physical Result" data-desc="Translating the digital brand into premium product mockups.">
             </div>
         </div>
     </div>
 
     <script>
-        // 1. PRELOADER
         let count = 0;
         let counter = setInterval(() => {
             count += 1;
@@ -224,18 +223,16 @@
             }
         }, 12);
 
-        // 2. SMOOTH SCROLL
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        // 3. NAVIGATION
         function openProject(id) {
-            gsap.to("#home-view", { opacity: 0, duration: 0.5, onComplete: () => {
+            gsap.to("#home-view", { opacity: 0, duration: 0.6, onComplete: () => {
                 document.getElementById('home-view').classList.remove('active');
                 const project = document.getElementById(id);
                 project.classList.add('active');
-                gsap.to(project, { opacity: 1, duration: 0.5 });
+                gsap.to(project, { opacity: 1, duration: 0.6 });
                 window.scrollTo(0,0);
                 ScrollTrigger.refresh();
             }});
@@ -243,17 +240,16 @@
 
         function closeProject() {
             const active = document.querySelector('.view.active:not(#home-view)');
-            gsap.to(active, { opacity: 0, duration: 0.5, onComplete: () => {
+            gsap.to(active, { opacity: 0, duration: 0.6, onComplete: () => {
                 active.classList.remove('active');
                 const home = document.getElementById('home-view');
                 home.classList.add('active');
-                gsap.to(home, { opacity: 1, duration: 0.5 });
+                gsap.to(home, { opacity: 1, duration: 0.6 });
                 window.scrollTo(0,0);
                 ScrollTrigger.refresh();
             }});
         }
 
-        // 4. BI-DIRECTIONAL STICKY LOGIC
         gsap.registerPlugin(ScrollTrigger);
         function initSticky(containerId, titleId, descId) {
             const container = document.querySelector(`#${containerId} .project-section`);
@@ -273,7 +269,7 @@
                         const img = imgs[index];
                         imgs.forEach(m => m.classList.remove('active'));
                         img.classList.add('active');
-                        gsap.to([title, desc], { opacity: 0, y: 3, duration: 0.2, onComplete: () => {
+                        gsap.to([title, desc], { opacity: 0, y: 5, duration: 0.2, onComplete: () => {
                             title.innerText = img.dataset.title;
                             desc.innerText = img.dataset.desc;
                             gsap.to([title, desc], { opacity: 1, y: 0, duration: 0.2 });
@@ -286,8 +282,8 @@
         initSticky('yb-view', 'y-title', 'y-desc');
 
         document.querySelectorAll('.reveal').forEach(el => {
-            gsap.from(el, { scrollTrigger: { trigger: el, start: "top 95%" }, opacity: 0, y: 15, duration: 1 });
+            gsap.from(el, { scrollTrigger: { trigger: el, start: "top 95%" }, opacity: 0, y: 30, duration: 1 });
         });
     </script>
 </body>
-                    </html>
+    </html>
