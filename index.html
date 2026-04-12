@@ -12,28 +12,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        :root { --bg: #000; --card: #080808; --accent: #FF4D00; --border: rgba(255, 255, 255, 0.05); }
+        :root { --bg: #000; --accent: #FF4D00; --border: rgba(255, 255, 255, 0.05); }
         body { font-family: 'Sora', sans-serif; background-color: var(--bg); color: #fff; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
         #loader { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
         
-        /* RESTORED BIG HERO TYPE */
         .hero-title { font-size: 16vw; line-height: 0.85; font-weight: 800; letter-spacing: -0.05em; text-transform: uppercase; }
         @media (min-width: 768px) { .hero-title { font-size: 10vw; } }
 
         .stroke-text { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
         
-        .view { display: none; opacity: 0; }
-        .view.active { display: block; opacity: 1; }
+        /* MENU OVERLAY */
+        #menu-overlay { 
+            position: fixed; inset: 0; background: #000; z-index: 999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transform: translateY(100%); /* Initial position for Up Side Animation */
+        }
+        .menu-link { font-size: 12vw; font-weight: 800; text-transform: uppercase; line-height: 1; letter-spacing: -0.05em; margin-bottom: 20px; transition: 0.3s; }
+        .menu-link:hover { color: var(--accent); transform: skewX(-5deg); }
+        @media (min-width: 768px) { .menu-link { font-size: 6vw; } }
+
+        /* HAMBURGER 2 LINES */
+        .burger-line { width: 28px; height: 2px; background: white; transition: 0.4s; }
+        .burger-line-short { width: 18px; align-self: flex-end; }
 
         .glass-ui { 
             background: rgba(255, 255, 255, 0.02); 
             backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px); 
             border: 1px solid rgba(255, 255, 255, 0.06); 
         }
 
-        /* PROJECT CARDS */
         .project-card { 
             position: relative; border-radius: 20px; overflow: hidden; 
             aspect-ratio: 16/10; border: 1px solid var(--border); 
@@ -44,46 +52,6 @@
         .project-card img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s ease; filter: brightness(0.8); }
         .project-card:hover img { transform: scale(1.08); filter: brightness(0.4); }
 
-        /* CRYSTAL SMALL TYPE BADGE */
-        .text-badge {
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5);
-            padding: 0.4rem 0.8rem;
-            border-radius: 12px;
-            position: absolute;
-            bottom: 15px; left: 15px;
-            z-index: 50;
-            width: fit-content;
-        }
-
-        .text-badge h3 { font-size: 0.85rem; line-height: 1; font-weight: 700; }
-        .text-badge p { font-size: 0.45rem; line-height: 1; margin-top: 3px; opacity: 0.5; font-weight: 600; letter-spacing: 0.05em; }
-        
-        .accent-line { 
-            width: 100%; height: 1.5px; 
-            background: linear-gradient(90deg, transparent, var(--accent), transparent); 
-            box-shadow: 0 0 8px var(--accent);
-            margin-top: 4px; 
-        }
-
-        .project-section { height: 500vh; position: relative; }
-        .sticky-wrapper { position: sticky; top: 0; height: 100vh; overflow: hidden; width: 100%; background: #000; }
-        
-        .case-img { 
-            position: absolute; inset: 0; width: 100%; height: 100%; 
-            object-fit: contain; padding: 10vh 5vw; opacity: 0; 
-            transition: opacity 0.8s ease, transform 0.8s ease;
-            transform: scale(0.98);
-        }
-        .case-img.active { opacity: 0.85; transform: scale(1); } 
-
-        .overlay-text { position: absolute; bottom: 8%; left: 8%; z-index: 50; max-width: 320px; }
-        .overlay-text h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
-        .overlay-text p { font-size: 0.55rem; opacity: 0.5; margin-top: 4px; }
-
         .marquee { display: flex; overflow: hidden; border-y: 1px solid var(--border); padding: 25px 0; background: #050505; }
         .marquee-content { display: flex; animation: marquee 25s linear infinite; }
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -93,20 +61,30 @@
 
     <div id="loader"><h1 class="text-6xl font-black text-[#FF4D00]" id="load-text">0%</h1></div>
 
-    <main id="home-view" class="view active">
-        <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
-            <div class="font-black text-2xl tracking-tighter">ABHI.DESIGNS__</div>
-            <div class="hidden md:flex gap-10 text-[10px] uppercase tracking-[0.3em] font-bold">
-                <a href="#about" class="hover:text-[#FF4D00]">About</a>
-                <a href="#work-list" class="hover:text-[#FF4D00]">Works</a>
-                <a href="#contact" class="hover:text-[#FF4D00]">Contact</a>
-            </div>
+    <!-- FULL PAGE MENU OVERLAY -->
+    <div id="menu-overlay">
+        <nav class="flex flex-col items-center">
+            <a href="#about" onclick="toggleMenu()" class="menu-link">About</a>
+            <a href="#work-list" onclick="toggleMenu()" class="menu-link">Works</a>
+            <a href="#contact" onclick="toggleMenu()" class="menu-link">Contact</a>
+        </nav>
+    </div>
+
+    <main id="home-view">
+        <nav class="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-[1000] mix-blend-difference">
+            <div class="font-black text-lg md:text-2xl tracking-tighter">ABHI.DESIGNS__</div>
+            
+            <!-- THE 2 LINE BURGER BUTTON -->
+            <button onclick="toggleMenu()" class="flex flex-col gap-1.5 p-2 group overflow-hidden">
+                <div id="b-line-1" class="burger-line"></div>
+                <div id="b-line-2" class="burger-line burger-line-short"></div>
+            </button>
         </nav>
 
         <section class="h-screen flex flex-col justify-center px-10 md:px-24">
-            <h2 class="text-[#FF4D00] text-[11px] font-bold tracking-[0.5em] uppercase mb-6 hero-anim">Digital Designer</h2>
-            <h1 class="hero-title hero-anim">Scaling <br> <span class="stroke-text">Modern</span> Brands.</h1>
-            <p class="max-w-md mt-10 text-lg opacity-40 hero-anim font-light leading-relaxed">Elite design systems and visuals for world-class brands.</p>
+            <h2 class="text-[#FF4D00] text-[11px] font-bold tracking-[0.5em] uppercase mb-6">Digital Designer</h2>
+            <h1 class="hero-title">Scaling <br> <span class="stroke-text">Modern</span> Brands.</h1>
+            <p class="max-w-md mt-10 text-lg opacity-40 font-light leading-relaxed">Elite design systems and visuals for world-class brands.</p>
         </section>
 
         <div class="marquee"><div class="marquee-content text-4xl font-black uppercase opacity-10">
@@ -134,25 +112,14 @@
         <section id="work-list" class="px-6 md:px-24 py-20 max-w-7xl mx-auto">
             <h3 class="text-[9px] font-bold tracking-[0.6em] uppercase opacity-20 mb-12 text-center">Selected Works</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                
-                <div onclick="openProject('gippye-view')" class="project-card group cursor-pointer reveal">
+                <div onclick="window.open('https://abhi-designs.github.io/Gippyes-studio/', '_blank')" class="project-card group cursor-pointer reveal">
                     <img src="https://cdn.phototourl.com/free/2026-04-12-89f736be-031d-4859-b1a4-974c6e5038bb.jpg">
-                    <div class="text-badge">
-                        <h3 class="font-bold tracking-tight">Gippye's Studio</h3>
-                        <div class="accent-line"></div>
-                        <p class="uppercase tracking-widest opacity-60 font-bold">E-commerce / UI-UX</p>
-                    </div>
+                    <div class="absolute bottom-4 left-4 z-50 text-white font-black text-xs uppercase tracking-widest">Gippye's Studio</div>
                 </div>
-
-                <div onclick="openProject('yb-view')" class="project-card group cursor-pointer reveal">
+                <div onclick="window.open('https://abhi-designs.github.io/Yb-craft/', '_blank')" class="project-card group cursor-pointer reveal">
                     <img src="https://cdn.phototourl.com/free/2026-04-12-c9f212a9-079c-4e1f-9fad-402c58f933da.png">
-                    <div class="text-badge">
-                        <h3 class="font-bold tracking-tight">YB Craft</h3>
-                        <div class="accent-line"></div>
-                        <p class="uppercase tracking-widest opacity-60 font-bold">Brand Identity</p>
-                    </div>
+                    <div class="absolute bottom-4 left-4 z-50 text-white font-black text-xs uppercase tracking-widest">YB Craft</div>
                 </div>
-
             </div>
         </section>
 
@@ -163,56 +130,31 @@
                     <p class="text-[9px] uppercase tracking-widest opacity-30 mb-2">Email</p>
                     <span class="text-xl md:text-2xl font-bold group-hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</span>
                 </a>
-                <a href="https://instagram.com/abhi.designs__" target="_blank" class="group">
-                    <p class="text-[9px] uppercase tracking-widest opacity-30 mb-2">Instagram</p>
-                    <span class="text-xl md:text-2xl font-bold group-hover:text-[#FF4D00] transition">@abhi.designs__</span>
-                </a>
-            </div>
-            <div class="mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.3em] opacity-30">
-                <p>© 2025 Abhi Designs__</p>
-                <p class="mt-4 md:mt-0 font-black text-white opacity-100">Designed for Excellence</p>
             </div>
         </footer>
     </main>
 
-    <div id="gippye-view" class="view">
-        <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50">
-            <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back</button>
-            <div class="font-black text-lg tracking-tighter">Gippye's</div>
-        </nav>
-        <div class="project-section">
-            <div class="sticky-wrapper">
-                <div class="overlay-text">
-                    <h2 class="font-black tracking-tight mb-2" id="g-title">Home Page</h2>
-                    <p class="leading-relaxed opacity-60 font-light" id="g-desc">Premium dark-mode storefront design.</p>
-                </div>
-                <img src="https://image2url.com/r2/default/images/1775644983087-2b71e0c7-6e9e-4024-896e-60cbc2789b19.png" class="case-img active" data-title="Home Page" data-desc="The digital storefront for Gippye's Studio. Focused on high-end typography and dark aesthetics.">
-                <img src="https://image2url.com/r2/default/images/1775645339343-8c77330c-5e42-404a-a128-1f0a86863cd6.png" class="case-img" data-title="Flow" data-desc="Seamless mobile-first purchasing journey built for high conversion.">
-                <img src="https://image2url.com/r2/default/images/1775645374052-c735bb9a-c291-4106-ab27-b6a0805bab35.png" class="case-img" data-title="Admin" data-desc="Private dashboard for real-time inventory management.">
-            </div>
-        </div>
-    </div>
-
-    <div id="yb-view" class="view">
-        <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50">
-            <button onclick="closeProject()" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition">← Back</button>
-            <div class="font-black text-lg tracking-tighter">YB Craft</div>
-        </nav>
-        <div class="project-section">
-            <div class="sticky-wrapper">
-                <div class="overlay-text">
-                    <h2 class="font-black tracking-tight mb-2" id="y-title">The Identity</h2>
-                    <p class="leading-relaxed opacity-60 font-light" id="y-desc">Visual identity deconstruction.</p>
-                </div>
-                <img src="https://image2url.com/r2/default/images/1775645287652-e3104e25-e1bf-4592-9dc5-9ba5ef32570b.png" class="case-img active" data-title="The Identity" data-desc="Reflecting the warmth and creativity of handmade wool craft.">
-                <img src="https://image2url.com/r2/default/images/1775645466765-e367e088-0a7a-4a29-a8c3-e5ffdea0a7a7.png" class="case-img" data-title="Concept" data-desc="Integrating needle loops and sparkles to represent artistry.">
-                <img src="https://image2url.com/r2/default/images/1775645515172-96f0b601-968b-4425-ac9d-683ccd117e92.png" class="case-img" data-title="Palette" data-desc="Earthy tones chosen for an organic brand feel.">
-                <img src="https://image2url.com/r2/default/images/1775645544960-cef3d12f-de12-43ec-94bb-261534b3bbc1.png" class="case-img" data-title="Physical Result" data-desc="Translating the digital brand into premium product mockups.">
-            </div>
-        </div>
-    </div>
-
     <script>
+        // MENU ANIMATION LOGIC
+        let isMenuOpen = false;
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            const timeline = gsap.timeline();
+            
+            if(isMenuOpen) {
+                timeline.to("#menu-overlay", { y: 0, duration: 1, ease: "power4.inOut" })
+                        .to("#b-line-1", { rotate: 45, y: 4, duration: 0.3 }, 0.5)
+                        .to("#b-line-2", { rotate: -45, y: -4, width: "28px", duration: 0.3 }, 0.5);
+                document.body.style.overflow = "hidden"; // Disable scroll when menu is open
+            } else {
+                timeline.to("#menu-overlay", { y: "100%", duration: 0.8, ease: "power4.inOut" })
+                        .to("#b-line-1", { rotate: 0, y: 0, duration: 0.3 }, 0.2)
+                        .to("#b-line-2", { rotate: 0, y: 0, width: "18px", duration: 0.3 }, 0.2);
+                document.body.style.overflow = "auto";
+            }
+        }
+
+        // LOADER
         let count = 0;
         let counter = setInterval(() => {
             count += 1;
@@ -223,67 +165,16 @@
             }
         }, 12);
 
+        // SMOOTH SCROLL
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        function openProject(id) {
-            gsap.to("#home-view", { opacity: 0, duration: 0.6, onComplete: () => {
-                document.getElementById('home-view').classList.remove('active');
-                const project = document.getElementById(id);
-                project.classList.add('active');
-                gsap.to(project, { opacity: 1, duration: 0.6 });
-                window.scrollTo(0,0);
-                ScrollTrigger.refresh();
-            }});
-        }
-
-        function closeProject() {
-            const active = document.querySelector('.view.active:not(#home-view)');
-            gsap.to(active, { opacity: 0, duration: 0.6, onComplete: () => {
-                active.classList.remove('active');
-                const home = document.getElementById('home-view');
-                home.classList.add('active');
-                gsap.to(home, { opacity: 1, duration: 0.6 });
-                window.scrollTo(0,0);
-                ScrollTrigger.refresh();
-            }});
-        }
-
+        // REVEAL ANIMATIONS
         gsap.registerPlugin(ScrollTrigger);
-        function initSticky(containerId, titleId, descId) {
-            const container = document.querySelector(`#${containerId} .project-section`);
-            const imgs = gsap.utils.toArray(`#${containerId} .case-img`);
-            const title = document.getElementById(titleId);
-            const desc = document.getElementById(descId);
-            let lastIndex = -1;
-
-            ScrollTrigger.create({
-                trigger: container, start: "top top", end: "bottom bottom",
-                onUpdate: (self) => {
-                    let index = Math.floor(self.progress * imgs.length);
-                    if (index >= imgs.length) index = imgs.length - 1;
-                    if (index < 0) index = 0;
-                    if (index !== lastIndex) {
-                        lastIndex = index;
-                        const img = imgs[index];
-                        imgs.forEach(m => m.classList.remove('active'));
-                        img.classList.add('active');
-                        gsap.to([title, desc], { opacity: 0, y: 5, duration: 0.2, onComplete: () => {
-                            title.innerText = img.dataset.title;
-                            desc.innerText = img.dataset.desc;
-                            gsap.to([title, desc], { opacity: 1, y: 0, duration: 0.2 });
-                        }});
-                    }
-                }
-            });
-        }
-        initSticky('gippye-view', 'g-title', 'g-desc');
-        initSticky('yb-view', 'y-title', 'y-desc');
-
         document.querySelectorAll('.reveal').forEach(el => {
             gsap.from(el, { scrollTrigger: { trigger: el, start: "top 95%" }, opacity: 0, y: 30, duration: 1 });
         });
     </script>
 </body>
-    </html>
+</html>
