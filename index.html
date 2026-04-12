@@ -15,6 +15,14 @@
         :root { --bg: #000; --accent: #FF4D00; --border: rgba(255, 255, 255, 0.05); }
         body { font-family: 'Sora', sans-serif; background-color: var(--bg); color: #fff; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
+        /* NOISE TEXTURE */
+        .noise::before {
+            content: ""; position: fixed; inset: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04; z-index: 9999; pointer-events: none; animation: noise 0.2s infinite;
+        }
+        @keyframes noise { 0% { transform: translate(0,0) } 10% { transform: translate(-1%,-1%) } 20% { transform: translate(1%,1%) } 100% { transform: translate(0,0) } }
+
         #loader { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
         
         .hero-title { font-size: 16vw; line-height: 0.85; font-weight: 800; letter-spacing: -0.05em; text-transform: uppercase; }
@@ -22,17 +30,68 @@
 
         .stroke-text { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
         
-        /* MENU OVERLAY */
+        /* PREMIUM DESIGNED DIALOG BUBBLE */
+        .nav-logo-container { position: relative; display: inline-flex; flex-direction: column; align-items: flex-start; }
+        
+        .logo-bubble {
+            position: absolute;
+            top: calc(100% + 18px);
+            left: 5px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 7px 15px;
+            border-radius: 100px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #fff;
+            white-space: nowrap;
+            pointer-events: none;
+            /* Inner Glow & Outer Shadow */
+            box-shadow: 
+                inset 0 1px 1px rgba(255,255,255,0.2), 
+                0 15px 35px -5px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: float-bubble 5s ease-in-out infinite;
+            z-index: 50;
+        }
+
+        /* Pulsing Orange Dot inside bubble */
+        .bubble-dot {
+            width: 4px; height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse-dot 2s infinite;
+        }
+
+        /* Bubble Tail pointing UP */
+        .logo-bubble::before {
+            content: "";
+            position: absolute;
+            bottom: 100%; left: 18px;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 9px solid rgba(255, 255, 255, 0.18);
+        }
+
+        @keyframes float-bubble { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(6px) rotate(-1deg); } }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+
         #menu-overlay { 
             position: fixed; inset: 0; background: #000; z-index: 999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transform: translateY(100%); /* Initial position for Up Side Animation */
+            transform: translateY(100%); 
         }
         .menu-link { font-size: 12vw; font-weight: 800; text-transform: uppercase; line-height: 1; letter-spacing: -0.05em; margin-bottom: 20px; transition: 0.3s; }
         .menu-link:hover { color: var(--accent); transform: skewX(-5deg); }
         @media (min-width: 768px) { .menu-link { font-size: 6vw; } }
 
-        /* HAMBURGER 2 LINES */
         .burger-line { width: 28px; height: 2px; background: white; transition: 0.4s; }
         .burger-line-short { width: 18px; align-self: flex-end; }
 
@@ -57,11 +116,10 @@
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     </style>
 </head>
-<body>
+<body class="noise">
 
     <div id="loader"><h1 class="text-6xl font-black text-[#FF4D00]" id="load-text">0%</h1></div>
 
-    <!-- FULL PAGE MENU OVERLAY -->
     <div id="menu-overlay">
         <nav class="flex flex-col items-center">
             <a href="#about" onclick="toggleMenu()" class="menu-link">About</a>
@@ -71,17 +129,23 @@
     </div>
 
     <main id="home-view">
-        <nav class="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-[1000] mix-blend-difference">
-            <div class="font-black text-lg md:text-2xl tracking-tighter">ABHI.DESIGNS__</div>
+        <nav class="fixed top-0 w-full p-6 md:p-10 flex justify-between items-start z-[1000] mix-blend-difference">
+            <div class="nav-logo-container">
+                <div class="font-black text-xl md:text-3xl tracking-tighter">ABHI.DESIGNS__</div>
+                <!-- THE UPGRADED BUBBLE -->
+                <div class="logo-bubble">
+                    <div class="bubble-dot"></div>
+                    <span id="time-greet">Good Morning</span>
+                </div>
+            </div>
             
-            <!-- THE 2 LINE BURGER BUTTON -->
             <button onclick="toggleMenu()" class="flex flex-col gap-1.5 p-2 group overflow-hidden">
                 <div id="b-line-1" class="burger-line"></div>
                 <div id="b-line-2" class="burger-line burger-line-short"></div>
             </button>
         </nav>
 
-        <section class="h-screen flex flex-col justify-center px-10 md:px-24">
+        <section class="min-h-screen flex flex-col justify-center px-10 md:px-24 pt-48 md:pt-40">
             <h2 class="text-[#FF4D00] text-[11px] font-bold tracking-[0.5em] uppercase mb-6">Digital Designer</h2>
             <h1 class="hero-title">Scaling <br> <span class="stroke-text">Modern</span> Brands.</h1>
             <p class="max-w-md mt-10 text-lg opacity-40 font-light leading-relaxed">Elite design systems and visuals for world-class brands.</p>
@@ -130,22 +194,36 @@
                     <p class="text-[9px] uppercase tracking-widest opacity-30 mb-2">Email</p>
                     <span class="text-xl md:text-2xl font-bold group-hover:text-[#FF4D00] transition">abhi.designs11@gmail.com</span>
                 </a>
+                <a href="https://instagram.com/abhi.designs__" target="_blank" class="group">
+                    <p class="text-[9px] uppercase tracking-widest opacity-30 mb-2">Instagram</p>
+                    <span class="text-xl md:text-2xl font-bold group-hover:text-[#FF4D00] transition">@abhi.designs__</span>
+                </a>
+            </div>
+            <div class="mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.3em] opacity-30">
+                <p>© 2025 Abhi Designs__</p>
+                <p class="mt-4 md:mt-0 font-black text-white opacity-100">Designed for Excellence</p>
             </div>
         </footer>
     </main>
 
     <script>
-        // MENU ANIMATION LOGIC
+        // GREETING LOGIC
+        const greetEl = document.getElementById("time-greet");
+        const hours = new Date().getHours();
+        if (hours < 12) greetEl.innerText = "Good Morning";
+        else if (hours < 18) greetEl.innerText = "Good Afternoon";
+        else greetEl.innerText = "Good Evening";
+
+        // MENU LOGIC
         let isMenuOpen = false;
         function toggleMenu() {
             isMenuOpen = !isMenuOpen;
             const timeline = gsap.timeline();
-            
             if(isMenuOpen) {
                 timeline.to("#menu-overlay", { y: 0, duration: 1, ease: "power4.inOut" })
                         .to("#b-line-1", { rotate: 45, y: 4, duration: 0.3 }, 0.5)
                         .to("#b-line-2", { rotate: -45, y: -4, width: "28px", duration: 0.3 }, 0.5);
-                document.body.style.overflow = "hidden"; // Disable scroll when menu is open
+                document.body.style.overflow = "hidden";
             } else {
                 timeline.to("#menu-overlay", { y: "100%", duration: 0.8, ease: "power4.inOut" })
                         .to("#b-line-1", { rotate: 0, y: 0, duration: 0.3 }, 0.2)
